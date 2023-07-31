@@ -8,7 +8,7 @@ const App = () => {
     <div>
       <Header />
       <main>
-        <Container fluid>
+        <Container fluid className='pt-3'>
           <Outlet />
         </Container>
       </main>
