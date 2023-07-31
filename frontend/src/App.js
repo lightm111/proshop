@@ -1,9 +1,18 @@
-import React from 'react'
+import { Container } from 'react-bootstrap';
+import { Outlet } from 'react-router-dom';
+import Header from './components/Header'
+import Footer from './components/Footer';
 
 const App = () => {
   return (
-    <div>App
-      <h1>Hello!</h1>
+    <div>
+      <Header />
+      <main>
+        <Container fluid>
+          <Outlet />
+        </Container>
+      </main>
+      <Footer />
     </div>
   )
 }
