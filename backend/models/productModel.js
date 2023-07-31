@@ -39,6 +39,8 @@ const productSch = mongoose.Schema({
         required: true
     },
     reviews: [reviewSch],
+    numReviews: Number,
+    rating: Number,
     user: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
