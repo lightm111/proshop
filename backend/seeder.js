@@ -10,7 +10,6 @@ connectDB()
 
 const destroyData = async () => {
     try {
-
         await Order.deleteMany({})
         await Product.deleteMany({})
         await User.deleteMany({})

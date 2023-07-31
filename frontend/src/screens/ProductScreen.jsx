@@ -10,7 +10,7 @@ const ProductScreen = () => {
   const { id } = useParams();
   useEffect(() => {
     const fetchProduct = async () => {
-      const { data } = await axios.get(`/api/product/${id}`, {
+      const { data } = await axios.get(`/api/products/${id}`, {
         baseURL: "http://localhost:3001",
       });
       setProduct(data);

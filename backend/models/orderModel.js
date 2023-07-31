@@ -62,4 +62,5 @@ const orderSch = mongoose.Schema({
     delivredAt: Date
 }, { timestamps: true })
 
-export default mongoose.model("Order", orderSch)
+const Order = mongoose.model("Order", orderSch)
+export default Order
