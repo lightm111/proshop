@@ -11,3 +11,10 @@
 .rating {
   color: rgb(235, 235, 1);
 }
+
+.loader {
+  display: block;
+  width: 100px;
+  height: 100px;
+  margin: 50px auto;
+}
