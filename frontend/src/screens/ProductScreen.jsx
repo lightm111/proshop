@@ -1,10 +1,21 @@
-import { useParams } from "react-router-dom";
-import { Card, Button, Row, Col, Image, ListGroup } from "react-bootstrap";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  Card,
+  Button,
+  Row,
+  Col,
+  Image,
+  ListGroup,
+  Form,
+} from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import Rating from "../components/Rating";
 import { useGetProductDetailsQuery } from "../slices/productsApiSlice";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { adddToCart } from "../slices/cartSlice";
 
 const ProductScreen = () => {
   const { id: productId } = useParams();
@@ -14,6 +25,15 @@ const ProductScreen = () => {
     isError,
     error,
   } = useGetProductDetailsQuery({ productId });
+
+  const [qty, setQty] = useState(1);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const addToCartHandler = () => {
+    dispatch(adddToCart({ ...product, qty }));
+    navigate("/cart");
+  };
+
   return (
     <>
       {isLoading ? (
@@ -25,10 +45,10 @@ const ProductScreen = () => {
       ) : (
         <div>
           <Row>
-            <Col sm={3}>
+            <Col md={4}>
               <Image src={product.image} fluid />
             </Col>
-            <Col sm={3}>
+            <Col md={4}>
               <Card className="border-light">
                 <Card.Title className="ps-2">{product.name}</Card.Title>
                 <Card.Header>by {product.brand}</Card.Header>
@@ -46,7 +66,7 @@ const ProductScreen = () => {
                 </Card.Body>
               </Card>
             </Col>
-            <Col sm={3} xl={2}>
+            <Col sm={6} md={4} lg={3}>
               <Card>
                 <Card.Body>
                   <ListGroup variant="flush">
@@ -61,17 +81,40 @@ const ProductScreen = () => {
                         <Col>Status:</Col>
                         <Col>
                           {product.countInStock > 0
-                            ? `${product.countInStock} availables`
+                            ? `in stock (${product.countInStock})`
                             : "Out of stock"}
                         </Col>
                       </Row>
                     </ListGroup.Item>
+                    {product.countInStock > 0 && (
+                      <ListGroup.Item>
+                        <Row>
+                          <Col>Quantity:</Col>
+                          <Col>
+                            <Form.Select
+                              size="sm"
+                              value={qty}
+                              onChange={(ev) => setQty(Number(ev.target.value))}
+                            >
+                              {[...Array(product.countInStock).keys()].map(
+                                (i) => (
+                                  <option key={i + 1} value={i + 1}>
+                                    {i + 1}
+                                  </option>
+                                )
+                              )}
+                            </Form.Select>
+                          </Col>
+                        </Row>
+                      </ListGroup.Item>
+                    )}
                   </ListGroup>
                 </Card.Body>
                 <LinkContainer to="/add-to-cart">
                   <Button
                     variant="primary"
                     disabled={product.countInStock === 0}
+                    onClick={addToCartHandler}
                   >
                     Add to Cart
                   </Button>
