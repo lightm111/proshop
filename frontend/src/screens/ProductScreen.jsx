@@ -15,7 +15,7 @@ import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { adddToCart } from "../slices/cartSlice";
+import { addToCart } from "../slices/cartSlice";
 
 const ProductScreen = () => {
   const { id: productId } = useParams();
@@ -29,8 +29,8 @@ const ProductScreen = () => {
   const [qty, setQty] = useState(1);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const addToCartHandler = () => {
-    dispatch(adddToCart({ ...product, qty }));
+  const addToCartHandler = async () => {
+    dispatch(addToCart({ ...product, qty }));
     navigate("/cart");
   };
 
@@ -110,7 +110,7 @@ const ProductScreen = () => {
                     )}
                   </ListGroup>
                 </Card.Body>
-                <LinkContainer to="/add-to-cart">
+                <LinkContainer to="/cart">
                   <Button
                     variant="primary"
                     disabled={product.countInStock === 0}
