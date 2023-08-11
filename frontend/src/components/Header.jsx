@@ -37,7 +37,7 @@ const Header = () => {
                 </Nav.Link>
               </LinkContainer>
             </Nav>
-            <Form inline>
+            <Form>
               <Form.Control
                 type="text"
                 placeholder="Search"
