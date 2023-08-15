@@ -29,8 +29,8 @@ const CartScreen = () => {
   };
 
   return (
-    <Row>
-      <Col md={8}>
+    <Row className="justify-content-center">
+      <Col md={8} lg={7} xl={6}>
         <h2>Shopping list</h2>
         {cartItems.length === 0 ? (
           <Message>
@@ -77,7 +77,7 @@ const CartScreen = () => {
           </ListGroup>
         )}
       </Col>
-      <Col md={4}>
+      <Col sm={"auto"}>
         <Card>
           <ListGroup variant="flush">
             <ListGroup.Item key={"subtotalItems"}>

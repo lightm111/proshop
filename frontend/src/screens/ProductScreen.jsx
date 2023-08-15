@@ -44,7 +44,7 @@ const ProductScreen = () => {
         </Message>
       ) : (
         <div>
-          <Row>
+          <Row className="justify-content-center">
             <Col md={4}>
               <Image src={product.image} fluid />
             </Col>
@@ -66,14 +66,14 @@ const ProductScreen = () => {
                 </Card.Body>
               </Card>
             </Col>
-            <Col sm={6} md={4} lg={3}>
+            <Col sm={"auto"}>
               <Card>
                 <Card.Body>
                   <ListGroup variant="flush">
                     <ListGroup.Item>
                       <Row>
                         <Col>Price:</Col>
-                        <Col>{product.price}</Col>
+                        <Col>${product.price}</Col>
                       </Row>
                     </ListGroup.Item>
                     <ListGroup.Item>

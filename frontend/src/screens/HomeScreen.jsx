@@ -18,7 +18,7 @@ const HomeScreen = () => {
       ) : (
         <div>
           <h1>Latest products</h1>
-          <Row>
+          <Row className="justify-content-center">
             {products.map((product) => (
               <Col key={product._id} sm={10} md={6} lg={4} xl={3}>
                 <Product product={product} />

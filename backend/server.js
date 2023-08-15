@@ -12,7 +12,10 @@ connectDB()
 const app = express()
 
 // CORS enabled
-app.use(cors())
+app.use(cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true // Allow cookies to be sent and received
+}))
 
 //Body parser
 app.use(express.json())
