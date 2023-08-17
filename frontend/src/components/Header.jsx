@@ -7,13 +7,27 @@ import {
   FaUser,
 } from "react-icons/fa6";
 import { LinkContainer } from "react-router-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useLogoutMutation } from "../slices/usersApiSlice";
+import { clearCredentials } from "../slices/authSlice";
+import { toast } from "react-toastify";
 
 const Header = () => {
   const { cartItems } = useSelector((state) => state.cart);
   const { userInfo } = useSelector((state) => state.auth);
 
-  const logoutHandler = (e) => {};
+  const dispatch = useDispatch();
+  const [logout] = useLogoutMutation();
+
+  const logoutHandler = async (e) => {
+    try {
+      await logout().unwrap();
+      dispatch(clearCredentials());
+      toast.info("Logged out");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <header>
