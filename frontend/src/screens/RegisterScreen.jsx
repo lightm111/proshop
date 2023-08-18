@@ -1,4 +1,5 @@
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, InputGroup } from "react-bootstrap";
+import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import FormContainer from "../components/FormContainer";
 import { useRegisterMutation } from "../slices/usersApiSlice";
 import { setCredentials } from "../slices/authSlice";
@@ -12,6 +13,7 @@ const RegisterScreen = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -41,7 +43,7 @@ const RegisterScreen = () => {
   };
 
   return (
-    <FormContainer title={"Register"}>
+    <FormContainer title={"Create a new user"}>
       <Form onSubmit={submitHandler}>
         <Form.Group controlId="formName" className="mb-3">
           <Form.Label>Name:</Form.Label>
@@ -69,24 +71,33 @@ const RegisterScreen = () => {
         </Form.Group>
         <Form.Group controlId="formPassword" className="mb-3">
           <Form.Label>Password:</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Password"
-            name="passsword"
-            value={password}
-            required
-            disabled={isLoading}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <InputGroup>
+            <Form.Control
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              name="passsword"
+              value={password}
+              required
+              disabled={isLoading}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </Button>
+          </InputGroup>
         </Form.Group>
-        <Button variant="info" type="submit" disabled={isLoading}>
+        <Button variant="success" type="submit" disabled={isLoading}>
           Register
         </Button>
         {isLoading && <Loader />}
-        <p>
+        <Form.Text as="p" className="mt-3 mb-2" style={{ fontSize: "1rem" }}>
           Already an user?{" "}
           <Link to={`/login?redirect=${redirectTo}`}>login here</Link>
-        </p>
+        </Form.Text>
       </Form>
     </FormContainer>
   );

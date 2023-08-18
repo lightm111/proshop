@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css"
 
 const App = () => {
   return (
-    <div>
+    <>
       <Header />
       <main>
         <Container fluid className='pt-3'>
@@ -16,7 +16,7 @@ const App = () => {
       </main>
       <Footer />
       <ToastContainer autoClose={3000} theme="dark" position="top-center" />
-    </div>
+    </>
   )
 }
 

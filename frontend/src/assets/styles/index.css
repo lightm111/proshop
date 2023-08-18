@@ -1,5 +1,5 @@
 .nav-link:hover {
-  color: aqua;
+  color: rgb(111, 111, 240);
 }
 
 .text-nowrap {
@@ -17,4 +17,8 @@
   width: 100px;
   height: 100px;
   margin: 50px auto;
+}
+
+.current-step {
+  border-bottom: 2px darkblue solid;
 }
