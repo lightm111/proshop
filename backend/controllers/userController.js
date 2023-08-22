@@ -1,7 +1,6 @@
 import User from "../models/userModel.js"
 import handleAsync from "../utils/handleAsync.js"
 import AppError from "../utils/AppError.js"
-import jwt from "jsonwebtoken"
 import makeToken from "../utils/makeToken.js"
 
 const userData = (obj) => (
@@ -22,7 +21,7 @@ const userLogin = handleAsync(async (req, res) => {
 
     if (user && await user.matchPassword(password)) {
         makeToken(res, user._id)
-        res.status(200).json(userData(user))
+        res.status(202).json(userData(user))
     } else {
         throw new AppError(401, "Invalid email or password")
     }
@@ -54,7 +53,7 @@ const userRegister = handleAsync(async (req, res) => {
     const newUser = new User({ name, email, password })
     await newUser.save()
     makeToken(res, newUser._id)
-    res.status(200).json(userData(newUser))
+    res.status(201).json(userData(newUser))
 })
 
 // @desc    User profile

@@ -7,12 +7,17 @@ import { useNavigate } from "react-router-dom";
 import { savePaymentMethod } from "../slices/cartSlice";
 
 const PaymentScreen = () => {
-  const [paymentMethod, setPaymentMethod] = useState("PayPal");
+  const [paymentMethod, setPaymentMethod] = useState(
+    (localStorage.getItem("cart") &&
+      JSON.parse(localStorage.getItem("cart")).paymentMethod) ||
+      "PayPal"
+  );
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { shippingAddress } = useSelector((state) => state.cart);
+
   useEffect(() => {
     if (!shippingAddress) {
       navigate("/shipping");
@@ -39,6 +44,7 @@ const PaymentScreen = () => {
               id="PayPal"
               name="paymentMethod"
               value={"PayPal"}
+              checked={paymentMethod === "PayPal"}
               onClick={(e) => setPaymentMethod(e.target.value)}
             />
             <Form.Check
@@ -48,6 +54,7 @@ const PaymentScreen = () => {
               id="BitCoin"
               name="paymentMethod"
               value={"BitCoin"}
+              checked={paymentMethod === "BitCoin"}
               onClick={(e) => setPaymentMethod(e.target.value)}
             />
           </Form.Group>
