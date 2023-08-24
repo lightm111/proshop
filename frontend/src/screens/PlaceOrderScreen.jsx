@@ -36,7 +36,7 @@ const PlaceOrderScreen = () => {
         totalPrice: cart.totalPrice,
       }).unwrap();
       dispacth(clearCartItems());
-      navigate(`/orders/${res._id}`);
+      navigate(`/order/${res._id}`);
     } catch (error) {
       console.log(error);
       toast.error(error.error || error.data?.message);
@@ -57,12 +57,14 @@ const PlaceOrderScreen = () => {
                 {shippingAddress.country}
               </p>
             </ListGroup.Item>
+
             <ListGroup.Item>
               <h2>Payment</h2>
               <p>
                 <strong>Method:</strong> {paymentMethod}
               </p>
             </ListGroup.Item>
+
             <ListGroup.Item>
               <h2>Cart</h2>
               {cart.cartItems.length === 0 ? (
@@ -80,7 +82,7 @@ const PlaceOrderScreen = () => {
                             rounded
                           />
                         </Col>
-                        <Col md={5}>
+                        <Col md={6}>
                           <Link to={`/product/${item._id}`}>{item.name}</Link>
                         </Col>
                         <Col md={4}>
@@ -95,6 +97,7 @@ const PlaceOrderScreen = () => {
             </ListGroup.Item>
           </ListGroup>
         </Col>
+
         <Col md={4}>
           <Card style={{ width: "18em" }}>
             <Card.Header>

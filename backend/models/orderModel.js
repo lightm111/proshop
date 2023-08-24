@@ -61,12 +61,12 @@ const orderSch = mongoose.Schema({
         default: false
     },
     paidAt: Date,
-    isDelivred: {
+    isDelivered: {
         type: Boolean,
         required: true,
         default: false
     },
-    delivredAt: Date
+    deliveredAt: Date
 }, { timestamps: true })
 
 const Order = mongoose.model("Order", orderSch)
