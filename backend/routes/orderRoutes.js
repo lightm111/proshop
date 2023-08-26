@@ -11,7 +11,7 @@ router.route("/")
     .get(checkUser, isAdmin, getAllOrders)
 router.get("/my-order", checkUser, getMyOrder)
 router.get("/:id", checkUser, getOrderById)
-router.get("/:id/pay", checkUser, updateOrderToPaid)
-router.get("/:id/deliver", checkUser, isAdmin, updateOrderToDelivered)
+router.put("/:id/pay", checkUser, updateOrderToPaid)
+router.put("/:id/deliver", checkUser, isAdmin, updateOrderToDelivered)
 
 export default router

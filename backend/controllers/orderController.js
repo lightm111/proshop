@@ -42,20 +42,35 @@ const getMyOrder = handleAsync(async (req, res) => {
 const getOrderById = handleAsync(async (req, res) => {
     const order = await Order.findById(req.params.id).populate("user", "name email")
     if (!order) {
-        throw new AppError(404, "No such orders")
+        throw new AppError(404, "No such order")
     }
     res.status(200).json(order)
 })
 
 // @desc    Update order status to paid
-// @route   GET /api/orders/:id/pay
+// @route   PUT /api/orders/:id/pay
 // @access  Private
 const updateOrderToPaid = handleAsync(async (req, res) => {
-    res.send("update order status to paid")
+    const { id } = req.params
+    const order = await Order.findById(id)
+    if (order) {
+        order.isPaid = true
+        order.paidAt = Date.now()
+        order.paymentResult = {
+            id: req.body.id,
+            status: req.body.status,
+            update_time: req.body.update_time,
+            email_address: req.body.email
+        }
+        const paidOrder = await order.save()
+        res.status(200).json(paidOrder)
+    } else {
+        throw new AppError(404, "No such order")
+    }
 })
 
 // @desc    Update order status to delivered
-// @route   GET /api/orders/:id/deliver
+// @route   PUT /api/orders/:id/deliver
 // @access  Private/Admin
 const updateOrderToDelivered = handleAsync(async (req, res) => {
     res.send("update order status to delivered")

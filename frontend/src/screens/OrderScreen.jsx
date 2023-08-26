@@ -1,18 +1,92 @@
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { useGetOrderDetailsQuery } from "../slices/ordersApiSlice";
+import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
+import {
+  useGetOrderDetailsQuery,
+  useGetPayPalClientIdQuery,
+  usePayOrderMutation,
+} from "../slices/ordersApiSlice";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import { ListGroup, Row, Col, Button, Card, Image } from "react-bootstrap";
+import {
+  ListGroup,
+  Row,
+  Col,
+  // Button,
+  Card,
+  Image,
+  Badge,
+} from "react-bootstrap";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 const OrderScreen = () => {
-  const { id } = useParams();
+  const { id: orderId } = useParams();
   const {
     data: order,
+    refetch,
     isLoading,
     isError,
     error,
-  } = useGetOrderDetailsQuery(id);
+  } = useGetOrderDetailsQuery(orderId);
+
+  // PayPal Payment
+  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
+  const [payOrder, { isLoading: isPaying }] = usePayOrderMutation();
+  const {
+    data: paypal,
+    isLoading: isPayPalLoading,
+    error: paypalError,
+  } = useGetPayPalClientIdQuery();
+
+  useEffect(() => {
+    if (!isPayPalLoading && !paypalError && paypal.clientId) {
+      const loadPayPalScript = async () => {
+        paypalDispatch({
+          type: "resetOptions",
+          value: { clientId: paypal.clientId, currency: "USD" },
+        });
+        paypalDispatch({ type: "setLoadingStatus", value: "pending" });
+      };
+      if (order && !order.isPaid && !window.paypal) {
+        loadPayPalScript();
+      }
+    }
+  }, [isPayPalLoading, paypalError, paypal, paypalDispatch, order]);
+
+  // PayPal Button handlers
+  const onApprove = (data, actions) =>
+    actions.order.capture().then(async (details) => {
+      try {
+        await payOrder({ orderId, details });
+        refetch();
+        toast.success("Payment success");
+      } catch (error) {
+        toast.error(error.data?.message || error.error);
+      }
+    });
+  // const onApproveTest = async () => {
+  //   try {
+  //     await payOrder({ orderId, details: { payer: {} } });
+  //     refetch();
+  //     toast.success("Payment success");
+  //   } catch (error) {
+  //     toast.error(error.data?.message || error.error);
+  //   }
+  // };
+  const onError = (error) => {
+    toast.error(error.message);
+  };
+  const createOrder = (data, actions) =>
+    actions.order
+      .create({
+        purchase_units: [
+          {
+            amount: { value: order.totalPrice },
+          },
+        ],
+      })
+      .then((orderId) => orderId);
 
   return isLoading ? (
     <Loader />
@@ -22,6 +96,17 @@ const OrderScreen = () => {
     <>
       {/* TODO: Change the default order id set my mongo */}
       <h1>Order #{order._id}</h1>
+      {order.isPaid && (
+        <Badge pill bg="primary">
+          Paid
+        </Badge>
+      )}
+      {order.isDelivered && (
+        <Badge pill bg="success">
+          Delivered
+        </Badge>
+      )}
+
       <Row>
         <Col md={8}>
           <ListGroup variant="flush">
@@ -44,7 +129,7 @@ const OrderScreen = () => {
                   <Message variant="danger">Not delivered yet</Message>
                 ) : (
                   <li>
-                    <strong>Delivered at:</strong>
+                    <strong>Delivered at: </strong>
                     {order.deliveredAt}
                   </li>
                 )}
@@ -61,7 +146,7 @@ const OrderScreen = () => {
                   <Message variant="danger">Not paid yet</Message>
                 ) : (
                   <li>
-                    <strong>Paid at:</strong>
+                    <strong>Paid at: </strong>
                     {order.paidAt}
                   </li>
                 )}
@@ -130,7 +215,30 @@ const OrderScreen = () => {
               </ListGroup>
             </Card.Body>
             <Card.Footer>
-              <Button variant="primary">Proceed to payment</Button>
+              {!order.isPaid && (
+                <>
+                  {isPaying && <Loader />}
+
+                  {isPending ? (
+                    <Loader />
+                  ) : (
+                    <>
+                      {/* <Button
+                        variant="primary"
+                        className="mb-2"
+                        onClick={onApproveTest}
+                      >
+                        Test on Approve
+                      </Button> */}
+                      <PayPalButtons
+                        onApprove={onApprove}
+                        onError={onError}
+                        createOrder={createOrder}
+                      />
+                    </>
+                  )}
+                </>
+              )}
             </Card.Footer>
           </Card>
         </Col>
