@@ -26,14 +26,14 @@ const addOrderItems = handleAsync(async (req, res) => {
 })
 
 // @desc    Get orders of the logged in user
-// @route   GET /api/orders/my-order
+// @route   GET /api/orders/my-orders
 // @access  Private
-const getMyOrder = handleAsync(async (req, res) => {
+const getMyOrders = handleAsync(async (req, res) => {
     const orders = await Order.find({ user: req.user._id })
     if (!orders) {
         req.status(404).send("No orders yet")
     }
-    req.status(200).json(orders)
+    res.status(200).json(orders)
 })
 
 // @desc    Get order by id
@@ -86,7 +86,7 @@ const getAllOrders = handleAsync(async (req, res) => {
 
 export {
     addOrderItems,
-    getMyOrder,
+    getMyOrders,
     getOrderById,
     updateOrderToPaid,
     updateOrderToDelivered,
