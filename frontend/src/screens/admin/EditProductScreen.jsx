@@ -170,6 +170,13 @@ const EditProductScreen = () => {
           </Button>
         )}
       </Form>
+      <Button
+        className="mt-3"
+        variant="dark"
+        onClick={() => navigate("/admin/products")}
+      >
+        Back
+      </Button>
     </FormContainer>
   );
 };

@@ -9,9 +9,13 @@ import {
   Form,
 } from "react-bootstrap";
 import Rating from "../components/Rating";
-import { useGetProductDetailsQuery } from "../slices/productsApiSlice";
+import {
+  useGetProductDetailsQuery,
+  useDeleteProductMutation,
+} from "../slices/productsApiSlice";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
+import { toast } from "react-toastify";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../slices/cartSlice";
@@ -35,9 +39,24 @@ const ProductScreen = () => {
 
   const { userInfo } = useSelector((state) => state.auth);
 
+  const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
+
+  const deleteHandler = async (p) => {
+    try {
+      const consent = window.confirm(`--> ${p.name} <--\nDelete this product?`);
+      if (consent) {
+        await deleteProduct({ productId: p._id });
+        toast.success("Product deleted");
+        navigate("/");
+      }
+    } catch (error) {
+      toast.error(error.data?.message || error);
+    }
+  };
+
   return (
     <>
-      {isLoading ? (
+      {isLoading || isDeleting ? (
         <Loader />
       ) : isError ? (
         <Message variant="danger">
@@ -45,7 +64,7 @@ const ProductScreen = () => {
         </Message>
       ) : (
         <div>
-          <Row className="justify-content-center">
+          <Row className="justify-content-center mb-3">
             <Col md={4}>
               <Image src={product.image} fluid />
             </Col>
@@ -128,13 +147,22 @@ const ProductScreen = () => {
           </Button>
 
           {userInfo && userInfo.isAdmin && (
-            <Button
-              className="ms-3"
-              variant="secondary"
-              onClick={() => navigate(`/admin/products/edit/${product._id}`)}
-            >
-              Edit this product
-            </Button>
+            <>
+              <Button
+                className="ms-3"
+                variant="secondary"
+                onClick={() => navigate(`/admin/products/edit/${product._id}`)}
+              >
+                Edit this product
+              </Button>
+              <Button
+                className="ms-3"
+                variant="danger"
+                onClick={() => deleteHandler(product)}
+              >
+                Delete this product
+              </Button>
+            </>
           )}
         </div>
       )}

@@ -1,13 +1,32 @@
 import { Row, Col, Button, Table } from "react-bootstrap";
 import { FaPlus, FaPenToSquare, FaTrash } from "react-icons/fa6";
-import { useGetProductsQuery } from "../../slices/productsApiSlice";
+import {
+  useDeleteProductMutation,
+  useGetProductsQuery,
+} from "../../slices/productsApiSlice";
 import Loader from "../../components/Loader";
+import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 
 const ProductsListScreen = () => {
-  const { data: products, isLoading } = useGetProductsQuery();
+  const { data: products, refetch, isLoading } = useGetProductsQuery();
 
   const navigate = useNavigate();
+
+  const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
+
+  const deleteHandler = async (p) => {
+    try {
+      const consent = window.confirm(`--> ${p.name} <--\nDelete this product?`);
+      if (consent) {
+        await deleteProduct({ productId: p._id });
+        toast.success("Product deleted");
+        refetch();
+      }
+    } catch (error) {
+      toast.error(error.data?.message || error);
+    }
+  };
 
   return (
     <>
@@ -36,7 +55,7 @@ const ProductsListScreen = () => {
           </tr>
         </thead>
         <tbody className="table-group-divider">
-          {isLoading ? (
+          {isLoading || isDeleting ? (
             <Loader />
           ) : (
             products.map((p, index) => (
@@ -55,7 +74,7 @@ const ProductsListScreen = () => {
                   >
                     <FaPenToSquare /> Edit
                   </Button>
-                  <Button variant="danger">
+                  <Button variant="danger" onClick={() => deleteHandler(p)}>
                     <FaTrash /> Delete
                   </Button>
                 </td>

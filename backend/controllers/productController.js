@@ -41,11 +41,30 @@ const editProduct = handleAsync(async (req, res) => {
             product[key] = req.body[key]
         }
         const updatedProduct = await product.save()
-        res.status(201).json(updatedProduct)
+        res.status(200).json(updatedProduct)
+    } else {
+        throw new AppError(404, "No such product")
+    }
+})
+
+// @desc    Delete a product
+// @route   DELETE /api/products
+// @access  Private/Admin
+const deleteProduct = handleAsync(async (req, res) => {
+    const product = await Product.findById(req.body.id)
+    if (product) {
+        const deletedProduct = await product.deleteOne()
+        res.status(200).json({ "message": "deleted", "data": deletedProduct })
     } else {
         throw new AppError(404, "No such product")
     }
 })
 
 
-export { getProducts, getProductById, addProduct, editProduct }
+export {
+    getProducts,
+    getProductById,
+    addProduct,
+    editProduct,
+    deleteProduct
+}
