@@ -1,17 +1,22 @@
 import { Button, Form, InputGroup } from "react-bootstrap";
 import FormContainer from "../../components/FormContainer";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  useAddProductMutation,
+  useEditProductMutation,
+  useGetProductDetailsQuery,
   useUploadProductImageMutation,
 } from "../../slices/productsApiSlice";
 import Loader from "../../components/Loader";
 import Message from "../../components/Message";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const AddProductScreen = () => {
+const EditProductScreen = () => {
   // TODO: Add validation
+  const { id: productId } = useParams();
+  const { data: product, isLoading: gettingProduct } =
+    useGetProductDetailsQuery({ productId });
+
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
   const [category, setCategory] = useState("");
@@ -20,7 +25,19 @@ const AddProductScreen = () => {
   const [countInStock, setCountInStock] = useState(0);
   const [image, setImage] = useState("");
 
-  const [addProduct, { isLoading, error }] = useAddProductMutation();
+  useEffect(() => {
+    if (!gettingProduct) {
+      setName(product.name);
+      setPrice(product.price);
+      setCategory(product.category);
+      setBrand(product.brand);
+      setDescription(product.description);
+      setCountInStock(product.countInStock);
+      setImage(product.image);
+    }
+  }, [gettingProduct, product]);
+
+  const [editProduct, { isLoading, error }] = useEditProductMutation();
   const [upload, { isLoading: isUploading }] = useUploadProductImageMutation();
 
   const navigate = useNavigate();
@@ -41,14 +58,17 @@ const AddProductScreen = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      const res = await addProduct({
-        name,
-        price,
-        category,
-        brand,
-        description,
-        image,
-        countInStock,
+      const res = await editProduct({
+        productId,
+        data: {
+          name,
+          price,
+          category,
+          brand,
+          description,
+          image,
+          countInStock,
+        },
       }).unwrap();
       navigate(`/product/${res._id}`);
     } catch (error) {
@@ -146,7 +166,7 @@ const AddProductScreen = () => {
           <Loader />
         ) : (
           <Button type="submit" disabled={isLoading}>
-            Add to stock
+            Save
           </Button>
         )}
       </Form>
@@ -154,4 +174,4 @@ const AddProductScreen = () => {
   );
 };
 
-export default AddProductScreen;
+export default EditProductScreen;

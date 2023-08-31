@@ -31,4 +31,21 @@ const addProduct = handleAsync(async (req, res) => {
     res.status(201).json(newProduct)
 })
 
-export { getProducts, getProductById, addProduct }
+// @desc    Edit a product
+// @route   PUT /api/products/:id
+// @access  Private/Admin
+const editProduct = handleAsync(async (req, res) => {
+    const product = await Product.findById(req.params.id)
+    if (product) {
+        for (const key in req.body) {
+            product[key] = req.body[key]
+        }
+        const updatedProduct = await product.save()
+        res.status(201).json(updatedProduct)
+    } else {
+        throw new AppError(404, "No such product")
+    }
+})
+
+
+export { getProducts, getProductById, addProduct, editProduct }

@@ -8,13 +8,12 @@ import {
   ListGroup,
   Form,
 } from "react-bootstrap";
-import { LinkContainer } from "react-router-bootstrap";
 import Rating from "../components/Rating";
 import { useGetProductDetailsQuery } from "../slices/productsApiSlice";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../slices/cartSlice";
 
 const ProductScreen = () => {
@@ -34,6 +33,8 @@ const ProductScreen = () => {
     navigate("/cart");
   };
 
+  const { userInfo } = useSelector((state) => state.auth);
+
   return (
     <>
       {isLoading ? (
@@ -48,6 +49,7 @@ const ProductScreen = () => {
             <Col md={4}>
               <Image src={product.image} fluid />
             </Col>
+
             <Col md={4}>
               <Card className="border-light">
                 <Card.Title className="ps-2">{product.name}</Card.Title>
@@ -66,6 +68,7 @@ const ProductScreen = () => {
                 </Card.Body>
               </Card>
             </Col>
+
             <Col sm={"auto"}>
               <Card>
                 <Card.Body>
@@ -110,21 +113,29 @@ const ProductScreen = () => {
                     )}
                   </ListGroup>
                 </Card.Body>
-                <LinkContainer to="/cart">
-                  <Button
-                    variant="primary"
-                    disabled={product.countInStock === 0}
-                    onClick={addToCartHandler}
-                  >
-                    Add to Cart
-                  </Button>
-                </LinkContainer>
+                <Button
+                  variant="primary"
+                  disabled={product.countInStock === 0}
+                  onClick={addToCartHandler}
+                >
+                  Add to Cart
+                </Button>
               </Card>
             </Col>
           </Row>
-          <LinkContainer to="/">
-            <Button variant="dark">Back</Button>
-          </LinkContainer>
+          <Button variant="dark" onClick={() => navigate("/")}>
+            Back
+          </Button>
+
+          {userInfo && userInfo.isAdmin && (
+            <Button
+              className="ms-3"
+              variant="secondary"
+              onClick={() => navigate(`/admin/products/edit/${product._id}`)}
+            >
+              Edit this product
+            </Button>
+          )}
         </div>
       )}
     </>

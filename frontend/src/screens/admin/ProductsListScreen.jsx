@@ -49,7 +49,10 @@ const ProductsListScreen = () => {
                 <td>${p.price}</td>
                 <td>{p.countInStock}</td>
                 <td className="d-flex justify-content-evenly">
-                  <Button variant="secondary">
+                  <Button
+                    variant="secondary"
+                    onClick={() => navigate(`/admin/products/edit/${p._id}`)}
+                  >
                     <FaPenToSquare /> Edit
                   </Button>
                   <Button variant="danger">
