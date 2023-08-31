@@ -53,7 +53,11 @@ const Header = () => {
               </LinkContainer>
               {userInfo ? (
                 <NavDropdown
-                  title={userInfo.name}
+                  title={
+                    userInfo.isAdmin
+                      ? `${userInfo.name} - Admin`
+                      : userInfo.name
+                  }
                   id="usernav"
                   className="dropstart"
                 >
@@ -67,6 +71,26 @@ const Header = () => {
                   <NavDropdown.Item onClick={logoutHandler}>
                     <FaArrowRightFromBracket /> Logout
                   </NavDropdown.Item>
+
+                  {userInfo.isAdmin && (
+                    <>
+                      <NavDropdown.Divider />
+                      <NavDropdown.ItemText>
+                        <Badge pill bg="info">
+                          admin
+                        </Badge>
+                      </NavDropdown.ItemText>
+                      <LinkContainer to={"/admin/products"}>
+                        <NavDropdown.Item>Products</NavDropdown.Item>
+                      </LinkContainer>
+                      <LinkContainer to={"/admin/users"}>
+                        <NavDropdown.Item>Users</NavDropdown.Item>
+                      </LinkContainer>
+                      <LinkContainer to={"/admin/orders"}>
+                        <NavDropdown.Item>Orders</NavDropdown.Item>
+                      </LinkContainer>
+                    </>
+                  )}
                 </NavDropdown>
               ) : (
                 <LinkContainer to="/login">

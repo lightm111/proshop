@@ -14,6 +14,7 @@ import "./assets/styles/index.css";
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import PrivateRoutes from './components/PrivateRoutes';
+import AdminRoutes from './components/AdminRoutes';
 import HomeScreen from './screens/HomeScreen';
 import ProductScreen from './screens/ProductScreen';
 import CartScreen from './screens/CartScreen';
@@ -24,6 +25,9 @@ import ShippingScreen from './screens/ShippingScreen';
 import PaymentScreen from './screens/PaymentScreen';
 import PlaceOrderScreen from './screens/PlaceOrderScreen';
 import OrderScreen from './screens/OrderScreen';
+import ProductsListScreen from './screens/admin/ProductsListScreen';
+import UsersListScreen from './screens/admin/UsersListScreen';
+import OrdersListScreen from './screens/admin/OrdersListScreen';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -33,12 +37,19 @@ const router = createBrowserRouter(
       <Route path='/cart' element={<CartScreen />} />
       <Route path='/login' element={<LoginScreen />} />
       <Route path='/register' element={<RegisterScreen />} />
+
       <Route path='' element={<PrivateRoutes />}>
         <Route path='/shipping' element={<ShippingScreen />} />
         <Route path='/payment' element={<PaymentScreen />} />
         <Route path='/place-order' element={<PlaceOrderScreen />} />
         <Route path='/order/:id' element={<OrderScreen />} />
         <Route path='/profile' element={<ProfileScreen />} />
+      </Route>
+
+      <Route path='/' element={<AdminRoutes />}>
+        <Route path='/admin/orders' element={<OrdersListScreen />} />
+        <Route path='/admin/users' element={<UsersListScreen />} />
+        <Route path='/admin/products' element={<ProductsListScreen />} />
       </Route>
     </Route>
   )

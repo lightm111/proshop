@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import {
+  useDeliverOrderMutation,
   useGetOrderDetailsQuery,
   useGetPayPalClientIdQuery,
   usePayOrderMutation,
@@ -16,9 +17,11 @@ import {
   Card,
   Image,
   Badge,
+  Button,
 } from "react-bootstrap";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 const OrderScreen = () => {
   const { id: orderId } = useParams();
@@ -87,6 +90,20 @@ const OrderScreen = () => {
         ],
       })
       .then((orderId) => orderId);
+
+  // Delivery
+  const { userInfo } = useSelector((state) => state.auth);
+  const [deliverOrder, { isLoading: isDeliverLoading, error: deliverError }] =
+    useDeliverOrderMutation();
+  const deliverHandler = async () => {
+    try {
+      await deliverOrder(orderId).unwrap();
+      refetch();
+      toast.success("Marked as Delivered");
+    } catch (error) {
+      toast.error(error.data?.message || error.error);
+    }
+  };
 
   return isLoading ? (
     <Loader />
@@ -238,6 +255,25 @@ const OrderScreen = () => {
                     </>
                   )}
                 </>
+              )}
+
+              {!userInfo.isAdmin &&
+              order.isPaid &&
+              !order.isDelivered &&
+              isDeliverLoading ? (
+                <Loader />
+              ) : deliverError ? (
+                <Message variant="danger">
+                  {deliverError.data?.message || deliverError.error}
+                </Message>
+              ) : (
+                <Button
+                  variant="info"
+                  className="my-2"
+                  onClick={deliverHandler}
+                >
+                  Mark as Delivered
+                </Button>
               )}
             </Card.Footer>
           </Card>

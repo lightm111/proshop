@@ -53,7 +53,7 @@ const getOrderById = handleAsync(async (req, res) => {
 const updateOrderToPaid = handleAsync(async (req, res) => {
     const { id } = req.params
     const order = await Order.findById(id)
-    if (order) {
+    if (order && !order.isPaid) {
         order.isPaid = true
         order.paidAt = Date.now()
         order.paymentResult = {
@@ -64,7 +64,10 @@ const updateOrderToPaid = handleAsync(async (req, res) => {
         }
         const paidOrder = await order.save()
         res.status(200).json(paidOrder)
-    } else {
+    } else if (order) {
+        throw new AppError(400, "Ordeer already paid")
+    }
+    else {
         throw new AppError(404, "No such order")
     }
 })
@@ -73,14 +76,26 @@ const updateOrderToPaid = handleAsync(async (req, res) => {
 // @route   PUT /api/orders/:id/deliver
 // @access  Private/Admin
 const updateOrderToDelivered = handleAsync(async (req, res) => {
-    res.send("update order status to delivered")
+    const order = await Order.findById(req.params.id)
+    if (order && order.isPaid && !order.isDelivered) {
+        order.deliveredAt = Date.now()
+        order.isDelivered = true
+        const deliveredOrder = await order.save()
+        res.status(200).json(deliveredOrder)
+    } else if (order && !order.isPaid) {
+        throw new AppError(400, "Order unpaid")
+    } else if (order) {
+        throw new AppError(400, "Order already delivered")
+    } else {
+        throw new AppError(404, "No such order")
+    }
 })
 
 // @desc    Get all orders
 // @route   GET /api/orders
 // @access  Private/Admin
 const getAllOrders = handleAsync(async (req, res) => {
-    const orders = await Order.find({})
+    const orders = await Order.find({}).populate("user", "name id")
     res.status(200).json(orders)
 })
 
