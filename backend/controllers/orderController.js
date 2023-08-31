@@ -65,7 +65,7 @@ const updateOrderToPaid = handleAsync(async (req, res) => {
         const paidOrder = await order.save()
         res.status(200).json(paidOrder)
     } else if (order) {
-        throw new AppError(400, "Ordeer already paid")
+        throw new AppError(400, "Order already paid")
     }
     else {
         throw new AppError(404, "No such order")

@@ -13,7 +13,6 @@ import {
   ListGroup,
   Row,
   Col,
-  // Button,
   Card,
   Image,
   Badge,
@@ -258,23 +257,23 @@ const OrderScreen = () => {
               )}
 
               {!userInfo.isAdmin &&
-              order.isPaid &&
-              !order.isDelivered &&
-              isDeliverLoading ? (
-                <Loader />
-              ) : deliverError ? (
-                <Message variant="danger">
-                  {deliverError.data?.message || deliverError.error}
-                </Message>
-              ) : (
-                <Button
-                  variant="info"
-                  className="my-2"
-                  onClick={deliverHandler}
-                >
-                  Mark as Delivered
-                </Button>
-              )}
+                order.isPaid &&
+                !order.isDelivered &&
+                (isDeliverLoading ? (
+                  <Loader />
+                ) : deliverError ? (
+                  <Message variant="danger">
+                    {deliverError.data?.message || deliverError.error}
+                  </Message>
+                ) : (
+                  <Button
+                    variant="info"
+                    className="my-2"
+                    onClick={deliverHandler}
+                  >
+                    Mark as Delivered
+                  </Button>
+                ))}
             </Card.Footer>
           </Card>
         </Col>
