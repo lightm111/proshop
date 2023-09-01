@@ -5,16 +5,21 @@ import {
   useGetProductsQuery,
 } from "../../slices/productsApiSlice";
 import Loader from "../../components/Loader";
+import Message from "../../components/Message";
 import { toast } from "react-toastify";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Paginate from "../../components/Paginate";
+import SearchBox from "../../components/SearchBox";
 
 const ProductsListScreen = () => {
   const [searchParams] = useSearchParams();
   const page = searchParams.get("page") || 1;
   const keyword = searchParams.get("keyword") || "";
 
-  const { data, refetch, isLoading } = useGetProductsQuery({ keyword, page });
+  const { data, refetch, isLoading, error } = useGetProductsQuery({
+    keyword,
+    page,
+  });
 
   const navigate = useNavigate();
 
@@ -36,8 +41,11 @@ const ProductsListScreen = () => {
   return (
     <>
       <Row>
-        <Col md={8}>
+        <Col md={4}>
           <h1>All Products</h1>
+        </Col>
+        <Col md={4}>
+          <SearchBox url={"/admin/products"} />
         </Col>
         <Col md={4}>
           <Button
@@ -62,6 +70,10 @@ const ProductsListScreen = () => {
         <tbody className="table-group-divider">
           {isLoading || isDeleting ? (
             <Loader />
+          ) : error ? (
+            <Message variant="danger">
+              {error.data?.message || error.error}
+            </Message>
           ) : (
             data.products.map((p, index) => (
               <tr key={index}>

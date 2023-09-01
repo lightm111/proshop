@@ -12,9 +12,13 @@ const getProducts = handleAsync(async (req, res) => {
     const count = await Product.countDocuments(keyword)
     const pages = Math.ceil(count / pageSize)
     page = Math.min(Number(page), pages)
-
-    const products = await Product.find(keyword)
-        .limit(pageSize).skip(pageSize * (page - 1))
+    let products
+    try {
+        products = await Product.find(keyword)
+            .limit(pageSize).skip(pageSize * (page - 1))
+    } catch (error) {
+        throw new AppError(404, "no such products")
+    }
 
     res.status(200).json({
         products, page, pages

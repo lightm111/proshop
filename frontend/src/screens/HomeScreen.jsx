@@ -5,6 +5,7 @@ import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Paginate from "../components/Paginate";
+import SearchBox from "../components/SearchBox";
 
 const HomeScreen = () => {
   const [searchParams] = useSearchParams();
@@ -20,15 +21,20 @@ const HomeScreen = () => {
 
   return (
     <>
+      <Row>
+        <Col md={8}>
+          <h1>Latest Products</h1>
+        </Col>
+        <Col md={4}>
+          <SearchBox url={"/"} />
+        </Col>
+      </Row>
       {isLoading ? (
         <Loader />
       ) : isError ? (
-        <Message variant="danger">
-          Error! {error.status} - {error.error}
-        </Message>
+        <Message variant="danger">{error.data?.message || error.error}</Message>
       ) : (
         <>
-          <h1>Latest products</h1>
           <Row className="justify-content-center">
             {data.products.map((product) => (
               <Col key={product._id} sm={10} md={6} lg={4} xl={3}>
