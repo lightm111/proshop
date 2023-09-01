@@ -20,7 +20,7 @@ const Rating = ({ value, num }) => {
         {value >= 5 ? <FaStar /> : value >= 4.5 && <FaStarHalfStroke />}
       </span>
 
-      <span> ({num && num})</span>
+      {num && <span> ({num})</span>}
     </span>
   );
 };

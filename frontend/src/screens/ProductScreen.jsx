@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   Card,
   Button,
@@ -12,6 +12,7 @@ import Rating from "../components/Rating";
 import {
   useGetProductDetailsQuery,
   useDeleteProductMutation,
+  useCreateProductReviewMutation,
 } from "../slices/productsApiSlice";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
@@ -24,6 +25,7 @@ const ProductScreen = () => {
   const { id: productId } = useParams();
   const {
     data: product,
+    refetch,
     isLoading,
     isError,
     error,
@@ -53,9 +55,48 @@ const ProductScreen = () => {
       toast.error(error.data?.message || error);
     }
   };
+  // Review
+  const [rating, setRating] = useState(1);
+  const [comment, setComment] = useState("");
+
+  const [creteReview, { isLoading: isReviewLoading }] =
+    useCreateProductReviewMutation();
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    try {
+      await creteReview({ productId, data: { rating, comment } }).unwrap();
+      refetch();
+      toast.success("Thanks for your review");
+    } catch (error) {
+      toast.error(error.data?.message || error.error);
+    }
+  };
 
   return (
     <>
+      <Button variant="dark" onClick={() => navigate(-1)}>
+        Back
+      </Button>
+
+      {userInfo && userInfo.isAdmin && (
+        <>
+          <Button
+            className="ms-3"
+            variant="secondary"
+            onClick={() => navigate(`/admin/products/edit/${product._id}`)}
+          >
+            Edit this product
+          </Button>
+          <Button
+            className="ms-3"
+            variant="danger"
+            onClick={() => deleteHandler(product)}
+          >
+            Delete this product
+          </Button>
+        </>
+      )}
       {isLoading || isDeleting ? (
         <Loader />
       ) : isError ? (
@@ -64,7 +105,7 @@ const ProductScreen = () => {
         </Message>
       ) : (
         <div>
-          <Row className="justify-content-center mb-3">
+          <Row className="justify-content-center my-3">
             <Col md={4}>
               <Image src={product.image} fluid />
             </Col>
@@ -142,28 +183,65 @@ const ProductScreen = () => {
               </Card>
             </Col>
           </Row>
-          <Button variant="dark" onClick={() => navigate("/")}>
-            Back
-          </Button>
-
-          {userInfo && userInfo.isAdmin && (
-            <>
-              <Button
-                className="ms-3"
-                variant="secondary"
-                onClick={() => navigate(`/admin/products/edit/${product._id}`)}
-              >
-                Edit this product
-              </Button>
-              <Button
-                className="ms-3"
-                variant="danger"
-                onClick={() => deleteHandler(product)}
-              >
-                Delete this product
-              </Button>
-            </>
-          )}
+          <Row>
+            <Col md={5}>
+              <h2>Reviews</h2>
+              {product.reviews.length === 0 ? (
+                <Message variant="secondary">No reviews yet</Message>
+              ) : (
+                product.reviews.map((r, index) => (
+                  <Card key={index} className="mb-2">
+                    <Card.Header className="d-flex justify-content-between">
+                      <Rating value={product.rating} />
+                      <span>
+                        by {r.user.name} on {r.createdAt.substring(0, 10)}
+                      </span>
+                    </Card.Header>
+                    <Card.Body>{r.comment}</Card.Body>
+                  </Card>
+                ))
+              )}
+              <Form onSubmit={submitHandler}>
+                <h3>Leave a review</h3>
+                {userInfo ? (
+                  <>
+                    <Form.Group>
+                      <Form.Label>Rating</Form.Label>
+                      <Form.Range
+                        min={1}
+                        max={5}
+                        step={1}
+                        onChange={(e) => setRating(e.target.value)}
+                      />
+                    </Form.Group>
+                    <Form.Group>
+                      <Form.Label>Comment</Form.Label>
+                      <Form.Control
+                        as={"textarea"}
+                        onChange={(e) => setComment(e.target.value)}
+                      />
+                    </Form.Group>
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      className="my-3"
+                      disabled={isReviewLoading}
+                    >
+                      Submit
+                    </Button>
+                    {isReviewLoading && <Loader />}
+                  </>
+                ) : (
+                  <Message variant="secondary">
+                    <Link to={`/login?redirect=/product/${productId}`}>
+                      Sign in
+                    </Link>{" "}
+                    to write a review
+                  </Message>
+                )}
+              </Form>
+            </Col>
+          </Row>
         </div>
       )}
     </>

@@ -6,10 +6,15 @@ import {
 } from "../../slices/productsApiSlice";
 import Loader from "../../components/Loader";
 import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import Paginate from "../../components/Paginate";
 
 const ProductsListScreen = () => {
-  const { data: products, refetch, isLoading } = useGetProductsQuery();
+  const [searchParams] = useSearchParams();
+  const page = searchParams.get("page") || 1;
+  const keyword = searchParams.get("keyword") || "";
+
+  const { data, refetch, isLoading } = useGetProductsQuery({ keyword, page });
 
   const navigate = useNavigate();
 
@@ -58,7 +63,7 @@ const ProductsListScreen = () => {
           {isLoading || isDeleting ? (
             <Loader />
           ) : (
-            products.map((p, index) => (
+            data.products.map((p, index) => (
               <tr key={index}>
                 <td>{p._id}</td>
                 <td>
@@ -83,6 +88,15 @@ const ProductsListScreen = () => {
           )}
         </tbody>
       </Table>
+      {isLoading || isDeleting ? (
+        <Loader />
+      ) : (
+        <Paginate
+          page={data.page}
+          pages={data.pages}
+          handlePage={(p) => navigate(`/admin/products?page=${p}`)}
+        />
+      )}
     </>
   );
 };

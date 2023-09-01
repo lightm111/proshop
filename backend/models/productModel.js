@@ -13,8 +13,8 @@ const reviewSch = mongoose.Schema({
     comment: {
         type: String,
         required: true
-    }
-})
+    },
+}, { timestamps: true })
 
 const productSch = mongoose.Schema({
     name: {

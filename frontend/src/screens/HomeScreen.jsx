@@ -3,9 +3,20 @@ import Product from "../components/Product";
 import { useGetProductsQuery } from "../slices/productsApiSlice";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import Paginate from "../components/Paginate";
 
 const HomeScreen = () => {
-  const { data: products, isLoading, isError, error } = useGetProductsQuery();
+  const [searchParams] = useSearchParams();
+  const page = searchParams.get("page") || 1;
+  const keyword = searchParams.get("keyword") || "";
+
+  const { data, isLoading, isError, error } = useGetProductsQuery({
+    keyword,
+    page,
+  });
+
+  const navigate = useNavigate();
 
   return (
     <>
@@ -16,16 +27,21 @@ const HomeScreen = () => {
           Error! {error.status} - {error.error}
         </Message>
       ) : (
-        <div>
+        <>
           <h1>Latest products</h1>
           <Row className="justify-content-center">
-            {products.map((product) => (
+            {data.products.map((product) => (
               <Col key={product._id} sm={10} md={6} lg={4} xl={3}>
                 <Product product={product} />
               </Col>
             ))}
           </Row>
-        </div>
+          <Paginate
+            page={data.page}
+            pages={data.pages}
+            handlePage={(p) => navigate(`/?page=${p}`)}
+          />
+        </>
       )}
     </>
   );

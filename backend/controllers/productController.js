@@ -6,8 +6,19 @@ import AppError from "../utils/AppError.js"
 // @route   GET /api/products
 // @access  Public
 const getProducts = handleAsync(async (req, res) => {
-    const products = await Product.find({})
-    res.status(200).json(products)
+    const pageSize = 2
+    let { page = 1 } = req.query
+    const keyword = req.query.keyword ? { name: { $regex: req.query.keyword, $options: "i" } } : {}
+    const count = await Product.countDocuments(keyword)
+    const pages = Math.ceil(count / pageSize)
+    page = Math.min(Number(page), pages)
+
+    const products = await Product.find(keyword)
+        .limit(pageSize).skip(pageSize * (page - 1))
+
+    res.status(200).json({
+        products, page, pages
+    })
 })
 
 // @desc    Fetch a product
@@ -16,6 +27,7 @@ const getProducts = handleAsync(async (req, res) => {
 const getProductById = handleAsync(async (req, res) => {
     const { id } = req.params
     const product = await Product.findById(id)
+        .populate({ path: "reviews", populate: { path: "user", select: "-password -email" } })
     if (!product) {
         throw new AppError(404, "No such product")
     }
@@ -61,11 +73,38 @@ const deleteProduct = handleAsync(async (req, res) => {
     }
 })
 
+// @desc    Review a product
+// @route   POST /api/products/:id/reviews
+// @access  Private
+const createProductReview = handleAsync(async (req, res) => {
+    const { rating, comment } = req.body
+    if (!rating || !comment) { throw new AppError(400, "Fill the rating and comment fields!") }
+
+    const product = await Product.findById(req.params.id)
+    if (!product) { throw new AppError(404, "No such product") }
+
+    const isAlreadyReviewed = product.reviews.find(r => r.user.toString() == req.user._id)
+    if (isAlreadyReviewed) { throw new AppError(400, "You have already reviewed this product") }
+
+    product.reviews.push({
+        user: req.user._id,
+        rating: Number(rating),
+        comment
+    })
+    product.numReviews = product.reviews.length
+    product.rating = Math.round(product.reviews
+        .reduce((acc, r) => acc + r.rating, 0) * 10 / product.numReviews) / 10
+
+    await product.save()
+    res.status(201).send({ message: "Reviewed" })
+})
+
 
 export {
     getProducts,
     getProductById,
     addProduct,
     editProduct,
-    deleteProduct
+    deleteProduct,
+    createProductReview
 }
