@@ -7,10 +7,10 @@ const router = Router()
 router.route("/")
     .get(getProducts)
     .post(checkUser, isAdmin, addProduct)
-    .delete(checkUser, isAdmin, deleteProduct)
 
 router.route("/:id")
     .get(getProductById)
     .put(checkUser, isAdmin, editProduct)
+    .delete(checkUser, isAdmin, deleteProduct)
 
 export default router

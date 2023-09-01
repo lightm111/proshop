@@ -80,28 +80,48 @@ const updateUserProfile = handleAsync(async (req, res) => {
 // @route   GET /api/users
 // @access  Private/Admin
 const getUsers = handleAsync(async (req, res) => {
-    res.send("get users")
+    const users = await User.find({}).deleteUser
+    res.status(200).send(users.map(user => userData(user)))
 })
 
 // @desc    Get one user by id
 // @route   GET /api/users/:id
 // @access  Private/Admin
 const getUserById = handleAsync(async (req, res) => {
-    res.send("get user by id")
+    const user = await User.findById(req.params.id)
+    if (user) {
+        res.status(200).json(userData(user))
+    } else {
+        throw new AppError(404, "No such user")
+    }
 })
 
 // @desc    Delete user
 // @route   DELETE /api/users/:id
 // @access  Private/Admin
 const deleteUser = handleAsync(async (req, res) => {
-    res.send("delete user")
+    const { id } = req.params
+    const user = await User.findById(id)
+    if (user) {
+        await user.deleteOne()
+        res.status(200).json({ "message": `user #${id} deleted` })
+    } else {
+        throw new AppError(404, "No such user")
+    }
 })
 
 // @desc    Update user
 // @route   PUT /api/users/:id
 // @access  Private/Admin
 const updateUser = handleAsync(async (req, res) => {
-    res.send("update a user")
+    const { name, email, password, isAdmin } = req.body
+    const user = await User.findById(req.params.id)
+    user.name = name || user.name
+    user.email = email || user.email
+    user.isAdmin = isAdmin || user.isAdmin
+    if (password) { user.password = password }
+    const updatedUser = await user.save()
+    res.status(200).json(userData(updatedUser))
 })
 
 export {
