@@ -19,7 +19,7 @@ const ProductsListScreen = () => {
     try {
       const consent = window.confirm(`--> ${p.name} <--\nDelete this product?`);
       if (consent) {
-        await deleteProduct({ productId: p._id });
+        await deleteProduct({ productId: p._id }).unwrap();
         toast.success("Product deleted");
         refetch();
       }

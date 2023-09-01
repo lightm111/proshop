@@ -80,7 +80,7 @@ const updateUserProfile = handleAsync(async (req, res) => {
 // @route   GET /api/users
 // @access  Private/Admin
 const getUsers = handleAsync(async (req, res) => {
-    const users = await User.find({}).deleteUser
+    const users = await User.find({})
     res.status(200).send(users.map(user => userData(user)))
 })
 
@@ -103,6 +103,9 @@ const deleteUser = handleAsync(async (req, res) => {
     const { id } = req.params
     const user = await User.findById(id)
     if (user) {
+        if (user.isAdmin) {
+            throw new AppError(400, "Cannot delete admin user")
+        }
         await user.deleteOne()
         res.status(200).json({ "message": `user #${id} deleted` })
     } else {
@@ -116,9 +119,9 @@ const deleteUser = handleAsync(async (req, res) => {
 const updateUser = handleAsync(async (req, res) => {
     const { name, email, password, isAdmin } = req.body
     const user = await User.findById(req.params.id)
-    user.name = name || user.name
-    user.email = email || user.email
-    user.isAdmin = isAdmin || user.isAdmin
+    user.name = name
+    user.email = email
+    user.isAdmin = isAdmin
     if (password) { user.password = password }
     const updatedUser = await user.save()
     res.status(200).json(userData(updatedUser))

@@ -78,7 +78,7 @@ const EditProductScreen = () => {
   };
 
   return (
-    <FormContainer title="Add a Product">
+    <FormContainer title="Edit a Product">
       <Form onSubmit={submitHandler}>
         <Form.Group className="mb-3">
           <Form.Label>Product name</Form.Label>
