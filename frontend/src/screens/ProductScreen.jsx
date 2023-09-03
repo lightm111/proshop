@@ -20,6 +20,7 @@ import { toast } from "react-toastify";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../slices/cartSlice";
+import Head from "../components/Head";
 
 const ProductScreen = () => {
   const { id: productId } = useParams();
@@ -104,7 +105,8 @@ const ProductScreen = () => {
           Error! {error.status} - {error.error}
         </Message>
       ) : (
-        <div>
+        <>
+          <Head title={product.name} />
           <Row className="justify-content-center my-3">
             <Col md={4}>
               <Image src={product.image} fluid />
@@ -242,7 +244,7 @@ const ProductScreen = () => {
               </Form>
             </Col>
           </Row>
-        </div>
+        </>
       )}
     </>
   );

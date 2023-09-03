@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Loader from "../components/Loader";
 import CheckoutSteps from "../components/CheckoutSteps";
+import Head from "../components/Head";
 
 const RegisterScreen = () => {
   const [name, setName] = useState("");
@@ -45,6 +46,7 @@ const RegisterScreen = () => {
 
   return (
     <>
+      <Head title="Register" />
       {redirectTo === "/shipping" && <CheckoutSteps step1 />}
       <FormContainer title={"Create a new user"}>
         <Form onSubmit={submitHandler}>

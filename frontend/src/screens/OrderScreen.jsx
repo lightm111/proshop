@@ -21,6 +21,7 @@ import {
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import Head from "../components/Head";
 
 const OrderScreen = () => {
   const { id: orderId } = useParams();
@@ -110,6 +111,7 @@ const OrderScreen = () => {
     <Message variant="danger">{error.data?.message || error.error}</Message>
   ) : (
     <>
+      <Head title="My order" />
       {/* TODO: Change the default order id set my mongo */}
       <h1>Order #{order._id}</h1>
       {order.isPaid && (

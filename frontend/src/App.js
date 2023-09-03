@@ -4,10 +4,12 @@ import Header from './components/Header'
 import Footer from './components/Footer';
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
+import Head from './components/Head';
 
 const App = () => {
   return (
     <>
+      <Head />
       <Header />
       <main>
         <Container fluid className='pt-3 ms-md-5'>

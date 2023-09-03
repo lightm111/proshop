@@ -7,6 +7,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import Paginate from "../components/Paginate";
 import SearchBox from "../components/SearchBox";
 import TopProducts from "../components/TopProducts";
+import Head from "../components/Head";
 
 const HomeScreen = () => {
   const [searchParams] = useSearchParams();
@@ -22,6 +23,7 @@ const HomeScreen = () => {
 
   return (
     <>
+      <Head title="Welcome to Proshop" />
       {page === 1 && !keyword && <TopProducts />}
       <Row>
         <Col md={8}>

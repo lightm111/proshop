@@ -35,7 +35,7 @@ const Header = () => {
         <Container fluid className="ms-md-3">
           <LinkContainer to="/">
             <Navbar.Brand>
-              <FaShop /> UShop
+              <FaShop /> ProShop
             </Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle aria-controls="navbar-collapse-id" />
