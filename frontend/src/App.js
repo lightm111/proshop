@@ -10,7 +10,7 @@ const App = () => {
     <>
       <Header />
       <main>
-        <Container fluid className='pt-3'>
+        <Container fluid className='pt-3 ms-md-5'>
           <Outlet />
         </Container>
       </main>

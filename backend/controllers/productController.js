@@ -103,6 +103,13 @@ const createProductReview = handleAsync(async (req, res) => {
     res.status(201).send({ message: "Reviewed" })
 })
 
+// @desc    Fetch top rated products
+// @route   GET /api/products/top
+// @access  Public
+const getTopProducts = handleAsync(async (req, res) => {
+    const products = await Product.find({}).sort({ rating: -1 }).limit(3)
+    res.status(200).send(products)
+})
 
 export {
     getProducts,
@@ -110,5 +117,6 @@ export {
     addProduct,
     editProduct,
     deleteProduct,
-    createProductReview
+    createProductReview,
+    getTopProducts
 }

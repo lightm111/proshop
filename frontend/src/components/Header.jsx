@@ -32,7 +32,7 @@ const Header = () => {
   return (
     <header>
       <Navbar bg="dark" variant="dark" expand="md" collapseOnSelect>
-        <Container fluid>
+        <Container fluid className="ms-md-3">
           <LinkContainer to="/">
             <Navbar.Brand>
               <FaShop /> UShop

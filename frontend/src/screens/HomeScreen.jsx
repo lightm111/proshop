@@ -6,6 +6,7 @@ import Message from "../components/Message";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Paginate from "../components/Paginate";
 import SearchBox from "../components/SearchBox";
+import TopProducts from "../components/TopProducts";
 
 const HomeScreen = () => {
   const [searchParams] = useSearchParams();
@@ -21,6 +22,7 @@ const HomeScreen = () => {
 
   return (
     <>
+      {page === 1 && !keyword && <TopProducts />}
       <Row>
         <Col md={8}>
           <h1>Latest Products</h1>

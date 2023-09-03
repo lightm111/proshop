@@ -9,7 +9,11 @@ const SearchBox = ({ url }) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    navigate(`${url}?keyword=${keyword.trim()}`);
+    if (keyword) {
+      navigate(`${url}?keyword=${keyword.trim()}`);
+    } else {
+      navigate(url);
+    }
   };
 
   return (
