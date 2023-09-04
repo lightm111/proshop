@@ -6,7 +6,7 @@ import AppError from "../utils/AppError.js"
 // @route   GET /api/products
 // @access  Public
 const getProducts = handleAsync(async (req, res) => {
-    const pageSize = 2
+    const pageSize = process.env.PAGE_SIZE
     let { page = 1 } = req.query
     const keyword = req.query.keyword ? { name: { $regex: req.query.keyword, $options: "i" } } : {}
     const count = await Product.countDocuments(keyword)

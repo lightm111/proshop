@@ -209,6 +209,7 @@ const ProductScreen = () => {
                   <>
                     <Form.Group>
                       <Form.Label>Rating</Form.Label>
+                      {/* TODO: Make a star-style rating */}
                       <Form.Range
                         min={1}
                         max={5}
