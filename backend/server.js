@@ -11,12 +11,11 @@ import userRoutes from "./routes/userRoutes.js"
 import orderRoutes from "./routes/orderRoutes.js"
 import uploadRoutes from "./routes/uploadRoutes.js"
 
-connectDB()
 const app = express()
 
 // CORS enabled
 app.use(cors({
-    origin: process.env.CLIENT_URL,
+    origin: process.env.NODE_ENV === "development" ? process.env.CLIENT_URL : "*",
     credentials: true // Allow cookies to be sent and received
 }))
 
@@ -55,6 +54,8 @@ app.use(handleError)
 
 const PORT = process.env.PORT || 3001
 
-app.listen(PORT, () => {
-    console.log(`Express listening on port ${PORT}`)
+connectDB().then(() => {
+    app.listen(PORT, () => {
+        console.log(`Express listening on port ${PORT}`)
+    })
 })
