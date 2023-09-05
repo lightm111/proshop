@@ -3,7 +3,7 @@ import express from "express"
 import cookieParser from "cookie-parser"
 import { notFound, handleError } from "./middleware/handleError.js"
 import dotenv from "dotenv"
-process.env.NODE_ENV === "development" && dotenv.config()
+process.env.NODE_ENV !== "production" && dotenv.config()
 import cors from "cors"
 import connectDB from "./config/db.js"
 import productRoutes from "./routes/productRoutes.js"
